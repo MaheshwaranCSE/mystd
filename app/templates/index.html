@@ -1,37 +1,184 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Student Monitoring</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Student Risk Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+        }
+        .card-metric {
+            text-align: center;
+            padding: 20px;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .heatmap td {
+            text-align: center;
+            font-weight: 500;
+        }
+    </style>
 </head>
-<body class="container mt-5">
+<body>
 
-<h2>Student Performance Monitoring</h2>
+<div class="container-fluid p-4">
 
-<h4>Assignment Submission</h4>
-<form action="/submit" method="post">
-<input name="student_id" placeholder="Student ID" class="form-control mb-2">
-<input name="assignment_id" placeholder="Assignment ID" class="form-control mb-2">
-<input name="marks" type="number" placeholder="Marks" class="form-control mb-2">
-<select name="status" class="form-control mb-2">
-<option value="complete">Complete</option>
-<option value="late">Late</option>
-<option value="incomplete">Incomplete</option>
-</select>
-<button class="btn btn-primary">Submit</button>
-</form>
+    <h3 class="mb-4">Student Performance Risk Dashboard</h3>
 
-<hr>
+    <!-- Top Metrics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm card-metric">
+                <div>Risk Possibility</div>
+                <div class="metric-value text-primary">44.4%</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm card-metric">
+                <div>Risk Threshold</div>
+                <div class="metric-value text-dark">9</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm card-metric">
+                <div>Assessment Status</div>
+                <div class="metric-value text-success">86.5%</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm card-metric">
+                <div>Response Status</div>
+                <div class="metric-value text-info">88.9%</div>
+            </div>
+        </div>
+    </div>
 
-<h4>Dropout Prediction</h4>
-<form action="/predict" method="post">
-<input name="attendance" type="number" placeholder="Attendance %" class="form-control mb-2">
-<input name="marks" type="number" placeholder="Marks" class="form-control mb-2">
-<button class="btn btn-warning">Predict</button>
-</form>
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <div class="section-title">Risk Rating Breakdown</div>
+                <canvas id="donutChart"></canvas>
+            </div>
+        </div>
 
-<br>
-<a href="/dashboard" class="btn btn-success">View Dashboard</a>
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <div class="section-title">Risk Heat Map</div>
+                <table class="table table-bordered heatmap">
+                    <tr>
+                        <th></th>
+                        <th>Low</th>
+                        <th>Medium</th>
+                        <th>High</th>
+                        <th>Critical</th>
+                    </tr>
+                    <tr>
+                        <td>Minor</td>
+                        <td class="bg-success text-white">40</td>
+                        <td class="bg-warning">50</td>
+                        <td class="bg-danger text-white">60</td>
+                        <td class="bg-danger text-white">70</td>
+                    </tr>
+                    <tr>
+                        <td>Major</td>
+                        <td class="bg-success text-white">20</td>
+                        <td class="bg-warning">45</td>
+                        <td class="bg-danger text-white">80</td>
+                        <td class="bg-danger text-white">90</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm p-3">
+                <div class="section-title">Action Plan Breakdown</div>
+                <canvas id="actionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Charts -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <div class="section-title">Top 5 Risk Subjects</div>
+                <canvas id="barChart1"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm p-3">
+                <div class="section-title">Top 5 Students Under Scrutiny</div>
+                <canvas id="barChart2"></canvas>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    new Chart(document.getElementById('donutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Critical', 'High', 'Medium', 'Low'],
+            datasets: [{
+                data: [10, 20, 30, 40],
+                backgroundColor: ['#dc3545','#fd7e14','#0d6efd','#20c997']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('actionChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Executed','Planned','Postponed'],
+            datasets: [{
+                data: [50, 30, 20],
+                backgroundColor: ['#0d6efd','#20c997','#6c757d']
+            }]
+        }
+    });
+
+    new Chart(document.getElementById('barChart1'), {
+        type: 'bar',
+        data: {
+            labels: ['Math','Physics','Chemistry','English','CS'],
+            datasets: [{
+                label: 'Risk Count',
+                data: [12, 9, 7, 5, 4],
+                backgroundColor: '#0d6efd'
+            }]
+        },
+        options: { indexAxis: 'y' }
+    });
+
+    new Chart(document.getElementById('barChart2'), {
+        type: 'bar',
+        data: {
+            labels: ['S101','S102','S103','S104','S105'],
+            datasets: [{
+                label: 'Risk Count',
+                data: [15, 12, 10, 8, 6],
+                backgroundColor: '#20c997'
+            }]
+        },
+        options: { indexAxis: 'y' }
+    });
+</script>
 
 </body>
 </html>
